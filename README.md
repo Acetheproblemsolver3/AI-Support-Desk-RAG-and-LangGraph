@@ -1,162 +1,232 @@
-# AI Support Desk: Ticket Categorization using RAG and LangGraph
-
-## Project Overview
-
-This project implements a **Retrieval-Augmented Generation (RAG) based support ticket categorization system** using **LangGraph**. The system retrieves similar historical support tickets from a vector database and uses a language model to classify new incoming support tickets into appropriate categories.
-
-The workflow combines **vector similarity search, contextual retrieval, and LLM reasoning** to improve the accuracy of ticket classification.
-
----
+# AI Support Desk: RAG-Based Ticket Categorization with LangGraph
 
 ## System Architecture
 
+```text
+                +---------------------+
+                |   User Support      |
+                |      Ticket         |
+                +----------+----------+
+                           |
+                           v
+                 +-------------------+
+                 |  Embedding Model  |
+                 | SentenceTransform |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 |   Vector Database |
+                 |       FAISS       |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 |   Retriever Node  |
+                 | (Similar Tickets) |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 |   Reasoning Node  |
+                 |      (LLM)        |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 | Structured Output |
+                 | Category, Tags,   |
+                 | Priority, ETA     |
+                 +-------------------+
 ```
-User Ticket
-     ↓
-Preprocessing
-     ↓
-Embedding Generation
-     ↓
-Vector Database (Similarity Search)
-     ↓
-Retriever
-     ↓
-LLM Reasoning
-     ↓
-Ticket Category Prediction
-```
-
-LangGraph is used to orchestrate the workflow as a **stateful agent pipeline**, enabling modular and extensible processing steps.
 
 ---
 
-## Key Components
+# Project Overview
 
-### Data Processing
+This project implements a **Retrieval-Augmented Generation (RAG) based support ticket categorization system** using **LangGraph**.
+
+The system retrieves similar historical support tickets from a **vector database** and uses a **Large Language Model (LLM)** to classify incoming tickets and generate structured support metadata.
+
+The system outputs structured information such as:
+
+- Ticket Category
+- Tags
+- Priority Level
+- Estimated Resolution Time (ETA)
+- Automated Support Response
+
+This project demonstrates how **vector search, LLM reasoning, and workflow orchestration** can be combined to build an intelligent support automation system.
+
+---
+
+# LangGraph Workflow
+
+```text
+Ticket Input
+     ↓
+Retriever Node
+     ↓
+Reasoning Node (LLM)
+     ↓
+Structured Ticket Output
+```
+
+Each node updates the shared **workflow state**, allowing modular and scalable AI pipelines.
+
+---
+
+# Key Components
+
+## Data Processing
+
 - Load and preprocess support ticket dataset
-- Clean and prepare text data for embeddings
+- Clean and prepare text for embeddings
 
-### Embeddings
-- Generate semantic embeddings using Sentence Transformers
+## Embeddings
 
-### Vector Database
-- Store ticket embeddings in FAISS for similarity search
+Semantic embeddings are generated using **Sentence Transformers**.
 
-### Retriever
-- Retrieve the most similar historical tickets
+## Vector Database
 
-### RAG Pipeline
-- Augment the query with retrieved ticket context
+Ticket embeddings are stored in **FAISS** to enable fast similarity search.
 
-### LangGraph Workflow
-- Build a graph-based pipeline with nodes for:
-  - Retrieval
-  - LLM reasoning
-  - Decision logic
+## Retriever
+
+The retriever identifies **historically similar tickets** that provide context for the LLM.
+
+## RAG Pipeline
+
+Retrieved tickets are injected into the prompt as context to improve classification accuracy.
+
+## LangGraph Workflow
+
+The system is orchestrated using **LangGraph**, which organizes the workflow into nodes:
+
+- Retriever Node
+- Reasoning Node
+- Decision Logic
 
 ---
 
-## Technologies Used
+# Structured Ticket Output
+
+The LLM generates structured JSON which is parsed into a support ticket table.
+
+Example:
+
+| Ticket ID | Category | Tags | Priority | ETA | Response |
+|----------|----------|------|----------|------|---------|
+| ST2023-007 | Hardware Issues | Laptop, Restart | High | 24 hours | Please restart the device and check hardware connections |
+| ST2023-008 | Data Recovery | Data loss, documents | High | Immediate | Please avoid using the device further and contact support |
+
+This demonstrates how **LLM outputs can automatically populate support ticket metadata**.
+
+---
+
+# Technologies Used
 
 - Python
 - LangGraph
 - LangChain
 - FAISS
 - Sentence Transformers
+- OpenAI API
 - Jupyter Notebook
 
 ---
 
-## Example Output
+# Repository Structure
 
-**Input Ticket**
-
-```
-"My wifi keeps disconnecting frequently"
-```
-
-**Predicted Category**
-
-```
-Network Issue
-```
-
----
-
-## Next Steps (Future Improvements)
-
-While this project focuses on implementing the core RAG-based classification pipeline, several extensions could enhance it further.
-
-### Multi-Agent Workflow
-
-Future versions could introduce specialized agents to handle different stages of ticket processing.
-
-```
-Ticket Input
-     ↓
-Classifier Agent
-     ↓
-Troubleshooter Agent
-     ↓
-Resolution Generator
-```
-
-### Memory and User Context
-
-The system could track repeated tickets from the same user to identify recurring issues and improve troubleshooting recommendations.
-
-### Escalation and Routing Agents
-
-Additional agents could automatically route tickets to appropriate support teams based on severity or issue type.
-
-```
-Agent 1 → Categorize ticket  
-Agent 2 → Determine severity  
-Agent 3 → Route ticket to support team
-```
-
-### Automated Ticket Resolution
-
-The system could retrieve solutions from historical tickets and suggest fixes automatically.
-
-```
-Ticket → Retrieve solution → Suggest resolution
-```
-
-### Automated Knowledge Base Creation
-
-Past support tickets could be stored in a vector database to create a continuously evolving support knowledge base.
-
-```
-Tickets → Embeddings → Vector Database → Searchable Knowledge Base
-```
-
-### User Interface
-
-A lightweight user interface using **Streamlit** could allow users to submit tickets and view predicted categories and recommended solutions.
-
-### Dynamic Category Discovery
-
-Clustering techniques could be used to automatically detect new support ticket categories as new types of issues emerge.
-
----
-
-## Repository Structure
-
-```
+```text
 project-root
 │
 ├── data
 │   └── support_ticket_data.csv
 │
 ├── notebooks
-│   └── ticket_rag_langgraph.ipynb
+│   └── rag_ticket_langgraph.ipynb
 │
-├── README.md
+└── README.md
 ```
 
 ---
 
-## Project Scope
+# Running the Project
 
-This project focuses specifically on **building the RAG pipeline and LangGraph orchestration for ticket categorization**. Additional features such as multi-agent workflows, automated resolution systems, and UI interfaces are listed as future improvements.
+Install dependencies
+
+```bash
+pip install langgraph langchain faiss-cpu sentence-transformers openai
+```
+
+Set your OpenAI API key
+
+```bash
+export OPENAI_API_KEY=your_api_key
+```
+
+Run the notebook
+
+```bash
+rag_ticket_langgraph.ipynb
+```
+
+---
+
+# Example Usage
+
+Input Ticket
+
+```
+"My laptop refuses to start"
+```
+
+Example Output
+
+```
+Category: Hardware Issues
+Priority: High
+ETA: 24 hours
+Suggested Response: Please restart the laptop and ensure hardware connections are secure.
+```
+
+---
+
+# Next Steps (Future Improvements)
+
+This project focuses on the **core RAG pipeline and LangGraph orchestration**. Future improvements could extend the system further.
+
+## Multi-Agent Workflow
+
+```
+Ticket
+  ↓
+Classifier Agent
+  ↓
+Troubleshooter Agent
+  ↓
+Resolution Generator
+```
+
+## User Memory
+
+Track repeated issues from the same user to detect recurring technical problems.
+
+## Ticket Routing
+
+Automatically route tickets to appropriate support teams.
+
+## Knowledge Base Creation
+
+Store resolved tickets in a vector database to build a searchable support knowledge base.
+
+## User Interface
+
+A lightweight UI using **Streamlit** could allow users to submit tickets and receive automated assistance.
+
+---
+
+# Project Scope
+
+This project focuses on building a **RAG-based ticket categorization system using LangGraph**. Advanced features such as multi-agent workflows and UI interfaces are intentionally left as future enhancements.
