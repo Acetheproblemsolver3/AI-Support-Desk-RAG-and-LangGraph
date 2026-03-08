@@ -160,8 +160,6 @@ Install dependencies
 pip install langgraph langchain faiss-cpu sentence-transformers openai
 ```
 
-Set your OpenAI API key
-
 Run the notebook
 
 ```bash
