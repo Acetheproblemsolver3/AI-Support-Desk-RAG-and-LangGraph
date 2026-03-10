@@ -22,14 +22,14 @@
                            |
                            v
                  +-------------------+
-                 |   Retriever Node  |
+                 |   Retriever       |
                  | (Similar Tickets) |
                  +---------+---------+
                            |
                            v
                  +-------------------+
-                 |   Reasoning Node  |
-                 |      (LLM)        |
+                 |    Reasoning       |
+                 |        LLM         |
                  +---------+---------+
                            |
                            v
